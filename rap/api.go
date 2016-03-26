@@ -136,7 +136,7 @@ func resources(w http.ResponseWriter, r *http.Request) *appError {
 		}
 	default:
 		return &appError{
-			errors.New("Attempted unsupport HTTP method " + r.Method),
+			errors.New("Unsupported HTTP method " + r.Method),
 			"Unsupported HTTP method",
 			http.StatusMethodNotAllowed,
 		}

@@ -25,3 +25,6 @@ _testmain.go
 
 #emacs tmp files
 *~
+
+#api keys
+*.yaml

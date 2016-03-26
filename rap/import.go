@@ -12,7 +12,6 @@ import (
 	"errors"
 	"io"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 )
@@ -33,6 +32,10 @@ func csvimport(w http.ResponseWriter, r *http.Request) *appError {
 			"Imports most be POSTed",
 			http.StatusMethodNotAllowed,
 		}
+	}
+
+	if !appengine.IsDevAppServer() && r.URL.Scheme != "https" {
+		http.Redirect(w, r, "https://"+r.Host, http.StatusMovedPermanently)
 	}
 
 	//this block for check the user's credentials should eventually be broken out into a filter
@@ -68,7 +71,7 @@ func csvimport(w http.ResponseWriter, r *http.Request) *appError {
 	log.Println(handler.Filename)
 
 	cr := csv.NewReader(file)
-	var res []resource
+	var res []*resource
 	var keys []*datastore.Key
 
 	//at the moment we always insert a new item, this should be an insert or update based on OrganizationName
@@ -84,7 +87,7 @@ func csvimport(w http.ResponseWriter, r *http.Request) *appError {
 
 		//we may want IDs in there eventually
 		//_, err = strconv.ParseInt(rec[0], 2, 64)
-		res = append(res, resource{
+		res = append(res, &resource{
 			Category:         rec[1],
 			OrganizationName: rec[2],
 			Address:          rec[3],
@@ -98,10 +101,12 @@ func csvimport(w http.ResponseWriter, r *http.Request) *appError {
 			LastUpdatedBy:    u.Email,
 			LastUpdatedTime:  time.Now().UTC(),
 			IsActive:         true,
-			Location: appengine.GeoPoint{
-				Lat: 39.9522 - rand.Float64(),
-				Lng: -75.1635 - rand.Float64(),
-			},
+			Location:         appengine.GeoPoint{},
+			//we can create fake coordinates for testing
+			//Location: appengine.GeoPoint{
+			//	Lat: 39.9522 - rand.Float64(),
+			//	Lng: -75.1635 - rand.Float64(),
+			//},
 		})
 
 		keys = append(keys, datastore.NewIncompleteKey(c, "Resource", nil))

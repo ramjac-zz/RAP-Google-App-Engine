@@ -34,6 +34,9 @@ func init() {
 	//bulk import from csv
 	http.Handle("/csvimport", appHandler(csvimport))
 
+	//trigger geocoding on existing resources
+	http.Handle("/geocoding", appHandler(geocoding))
+
 	//api
 	http.Handle("/resources", appHandler(resources))
 

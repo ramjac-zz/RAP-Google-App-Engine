@@ -2,6 +2,7 @@
 {{define "styles"}}{{end}}
 {{define "scripts"}}{{end}}
 {{define "body"}}
+<div>
 <form id="uploadform" name="uploadform" action="/csvimport" method="POST" enctype="multipart/form-data">
   <p>
     <input type="file" id="uploadfile" name="uploadfile" accept=".csv"/>
@@ -10,4 +11,17 @@
     <input type="submit" value="Upload" />
   </p>
 </form>
+</div>
+<hr />
+<div>
+  <form id="geocodeform" action="/geocoding" method="POST">
+    <p>
+      Run geocoding? This will attempt to update latitude and longitude coordinates of imported resources that do not have those values set. Resources that already have coordinates will not be updated.
+    </p>
+    <p>
+      <input type="submit" value="Run" />
+    </p>
+  </form>
+</div>
+
 {{end}}
